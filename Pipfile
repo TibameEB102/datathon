@@ -10,6 +10,10 @@ requests = "*"
 pandas = "*"
 bs4 = "*"
 jupyter = "*"
+xlrd = "*"
+jieba = "*"
+matplotlib = "*"
+wordcloud = "*"
 
 [requires]
 python_version = "3.7"
