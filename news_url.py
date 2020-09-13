@@ -1,4 +1,8 @@
-#%%
+'''
+爬取個新聞的內文，並將有關災情的文字存入csv
+
+'''
+
 import json
 import requests
 import random
@@ -9,7 +13,7 @@ import datetime
 import time
 import jieba
 import jieba
-#%%
+# 全形轉半形
 def strQ2B(ustring):
     ss = []
     for s in ustring:
@@ -24,19 +28,19 @@ def strQ2B(ustring):
         ss.append(rstring)
     return ''.join(ss)
 
-#%%
+
 # 設定繁體字典位置 & 加上擴充字典位置
 jieba.set_dictionary('jieba_data/user_dict.txt.big')
 jieba.load_userdict('jieba_data/user_dict.txt')
 jieba.load_userdict('jieba_data/user_dict_location.txt')
 
-#%%
+
 #停用字
 with open(file='jieba_data/simple_stop_words.txt', mode='r', encoding='utf-8') as file:
     stop_words = file.read().split('\n')
 
 
-#%%
+
 # 精確模式分詞 (cut_all=False)
 def cut(data):
 
@@ -48,7 +52,6 @@ def cut(data):
     return seg_stop_result_list
 
 
-#%%
 # 自建自典
 def user_dict_list():
     user_dict_list=[]
@@ -66,10 +69,6 @@ def user_dict_location_list():
     return user_dict_location_list
 
 
-
-
-
-#%%
 # 公視新聞網
 def ftvnews_news(url):
     try :
@@ -80,10 +79,10 @@ def ftvnews_news(url):
         content = soup.select('#contentarea')[0].text.replace("\n","")
     except IndexError as er:
         print('error',er)
-        pass
+        content = 'content'
     return content
 
-#%%
+
 # 民視新聞
 def news_pts(url):
     try :
@@ -96,7 +95,7 @@ def news_pts(url):
         print('error',er)
         content = 'content'
     return content
-#%%
+
 # 中時新聞網
 def chinatimes(url):
     try :
@@ -109,7 +108,7 @@ def chinatimes(url):
         print('error',er)
         content = 'content'
     return content
-#%%
+
 # 三立新聞網
 def setn(url):
     try :
@@ -123,7 +122,6 @@ def setn(url):
         content = 'content'
     return content
 
-#%%
 # 華視新聞網
 def cts(url):
     try :
@@ -137,7 +135,6 @@ def cts(url):
         content = 'content'
     return content
 
-#%%
 # 自由時報電子報
 def ltn(url):
     try :
@@ -150,7 +147,7 @@ def ltn(url):
         print('error',er)
         content = 'content'
     return content
-#%%
+
 # LINE TODAY
 def line(url):
     try :
@@ -164,7 +161,6 @@ def line(url):
         content = 'content'
     return content
 
-#%%
 # yahoo
 def yahoo(url):
     try :
@@ -180,21 +176,20 @@ def yahoo(url):
 
 
 
-#%%
 # 插入dataframe
-def df_col(time,area,text):
-    columns=['time','area','text']
+def df_col(time,media,area,text):
+    columns=['time','media','area','text']
     df_f = pd.DataFrame(columns=columns)
-    data = [time,area,text]
+    data = [time,media,area,text]
     df_f.loc[len(df_f)] = data
     print(time,area)
-    df_f.to_csv('data/news_url_data6.csv', mode='a',index=0, header=0,encoding='utf-8-sig')
+    df_f.to_csv('data/news_url_data4.csv', mode='a',index=0, header=0,encoding='utf-8-sig')
     return
 
-#%%
-# 遍歷df title是否符合自建自典
 
-df = pd.read_csv('data/網路輿情發文來源資料集_2020年06月.csv')
+
+# 遍歷dataframe的title並斷詞，是否符合自建自典，有就進入url內抓內文
+df = pd.read_csv('data/網路輿情發文來源資料集_2020年04月.csv')
 for index,row in df.iterrows():
     if [i for i in cut(row['title']) if i in user_dict_list()]:
         if row['media'] == '公視新聞網':
@@ -205,7 +200,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '民視新聞':
             text = ftvnews_news(row['url'])
             print(row['url'])
@@ -214,7 +209,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '中時新聞網':
             text = chinatimes(row['url'])
             print(row['url'])
@@ -223,7 +218,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '三立新聞網':
             text = setn(row['url'])
             print(row['url'])
@@ -232,7 +227,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '華視新聞網':
             text = cts(row['url'])
             print(row['url'])
@@ -241,7 +236,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '自由時報電子報':
             text = ltn(row['url'])
             print(row['url'])
@@ -250,7 +245,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == 'LINE TODAY':
             text = line(row['url'])
             print("linetoday",row['url'])
@@ -259,7 +254,7 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
+            df_col(row['datetime_publish'],row['media'], area, text)
         elif row['media'] == '奇摩新聞':
             text = yahoo(row['url'])
             print(row['url'])
@@ -268,6 +263,4 @@ for index,row in df.iterrows():
                 area = sorted(set(area),key = area.index)
             else:
                 area = 'no_area'
-            df_col(row['datetime_publish'], area, text)
-
-# %%
+            df_col(row['datetime_publish'],row['media'], area, text)

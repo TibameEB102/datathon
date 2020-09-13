@@ -14,6 +14,8 @@ xlrd = "*"
 jieba = "*"
 matplotlib = "*"
 wordcloud = "*"
+sklearn = "*"
+statsmodels = "*"
 
 [requires]
 python_version = "3.7"
