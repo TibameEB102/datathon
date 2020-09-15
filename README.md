@@ -1,5 +1,6 @@
 # datathon
 
+![](./data/datathon.jpg)
 [official website](https://2020datathon.wixsite.com/hack?fbclid=IwAR2Wq_WmulssiwOFqQ9wh_vRwReLGh2XQmlrWVnMgWBC9lgqX9vnjDD4074)
 
 <br/>
