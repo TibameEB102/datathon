@@ -8,4 +8,4 @@
 
 # Teams:
 
-![](./app/static/image/datathon_list.jpg)
+![](./datathon_linechatbot/app/static/image/datathon_list.jpg)
